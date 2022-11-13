@@ -1,0 +1,135 @@
+{% extends 'backend/base.html' %}
+
+{% block title %} Product List {% endblock %}
+
+{% block content %}
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Products</h1>
+</div>
+
+
+<div class="card">
+    <form action="" method="GET" class="card-header">
+        <div class="form-row justify-content-between">
+            <div class="col-md-2">
+                <input type="text" name="title" placeholder="Product Title" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <select name="variant" id="" class="form-control">
+                {% for variantlist in variant %}
+                
+                    <option style = "background-color: gainsboro;" selected disabled value={{variantlist.id}}> {{variantlist.title}}</option>
+                    
+                    {% for productVariants in product_variant %}
+                    {% if variantlist.title == productVariants.variant.title %}
+                        <option>{{productVariants.variant_title}}</option>
+                    {% endif %}
+                    {% endfor %}
+                    {% endfor %}
+                </select>
+                
+            </div>
+
+            <div class="col-md-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Price Range</span>
+                    </div>
+                    <input type="text" name="price_from" aria-label="First name" placeholder="From"
+                           class="form-control">
+                    <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="date" placeholder="Date" class="form-control">
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-primary float-right"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+    </form>
+
+    <div class="card-body">
+        <div class="table-response">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Variant</th>
+                    <th width="150px">Action</th>
+                </tr>
+                </thead>
+            
+                
+                <tbody>
+                    {% for product in product_list %}
+                <tr>
+                    <td>{{product.id}}</td>
+                    <td>{{product.title}} <br>created at: {{product.created_at}}</td>
+                    <td>{{product.description}}</td>
+                    
+                    <td>
+                        
+                        <dl class="row mb-0" style="height: 80px; overflow: hidden" id={{product.id}}>
+                            {% for variant in variant_context %}
+                            {% if variant.product.title == product.title  %}
+                            <dt class="col-sm-3 pb-0">
+                                    {{variant.product_variant_one.variant_title}}/{{variant.product_variant_two.variant_title}}/{{variant.product_variant_three.variant_title}}
+                                    
+                                </dt>
+                                <dd class="col-sm-9">
+                                    <dl class="row mb-0">
+                                        <dd class="col-sm-4 pb-0">Price : {{variant.price}}</dd>
+                                        <dd class="col-sm-8 pb-0">InStock : {{variant.stock}}.</dd>
+                                    </dl>
+                                </dd>
+                                {% endif %}
+                                {% endfor %} 
+                                
+                            </dl>
+                            
+                        <button onclick="$('#{{product.id}}').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more
+                        </button>
+                        
+                    </td>
+                    
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="" class="btn btn-success">Edit</a>
+                        </div>
+                    </td>
+                </tr>
+                {%endfor%}
+                </tbody>
+
+               
+
+            </table>
+        </div>
+
+    </div>
+
+    <div class="card-footer">
+        <div class="pagination">
+            showing {{product_list.count}} products
+                
+            <span class="page-links" style="margin-left: 350px;">
+                {% if page_obj.has_previous %}
+                    <a href="/product/show/?browse={{ input }}&page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    
+                    
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="/product/show/?browse={{ input }}&page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>
+{% endblock %}
